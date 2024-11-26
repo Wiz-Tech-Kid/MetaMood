@@ -75,6 +75,36 @@ Below is a list of dependencies and their use cases:
 
 ### Folder Structure
 
+```plaintext
+lib/
+├── main.dart                       // Entry point of the application
+├── pages/                          // Contains UI screens
+│   ├── Home/                       //
+│   │    ├── chatbot.dart           //
+│   │    ├── exercises_page.dart    //
+│   │    ├── goals_progress.dart    //
+│   │    ├── home_page.dart         //
+│   │    ├── journal_page.dart      //
+│   │    ├── settings.dart          //
+│   │    └── user_management.dart   //
+│   │ 
+│   ├── Login/                      //
+│   │    ├── forgot_password.dart   //
+│   │    ├── login.dart             //
+│   │    ├── sign_up.dart           //
+│   │    └── splash_page.dart       //
+│   │ 
+│   └── MoodTracking/               //
+│       └── mood_tracking.dart      //
+│    
+├── services/                       // Handles API calls and Firebase logic
+│   ├── database.dart               // Firebase Authentication logic
+│   └── health_service.dart         //
+│
+├── models/                         //
+    ├── achievement.dart            // Data models for the app
+    └── health_activity.dart        //
+
 ---
 
 ### Usage
