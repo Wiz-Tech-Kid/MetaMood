@@ -23,6 +23,8 @@ Welcome to the **AI Mental Health Chatbot Application**! This Flutter applicatio
 - Firebase project (set up for Android/iOS)
 - OpenAI API key for AI responses
 
+---
+
 ### Installation
 1. Clone the repository:
    ```bash
@@ -40,6 +42,8 @@ Welcome to the **AI Mental Health Chatbot Application**! This Flutter applicatio
 - Create an .env file at the root of the project:
   ```env
   OPENAI_API_KEY=your_openai_api_key
+
+---
 
 ### Dependencies
 Below is a list of dependencies and their use cases:
@@ -66,27 +70,38 @@ firebase_remote_config	^5.1.5	Enables dynamic configuration updates.
 image_picker	^1.1.2	Enables image selection from the gallery or camera.
 firebase_analytics	^11.3.5	Tracks user interactions and app usage.
 
+---
+
 ### Folder Structure
+
+---
+
 ### Usage
-1.Run the app:
-bash
-flutter run
-2.Explore the chatbot interface and interact with the AI for mental health support.
-3.Sign in or sign up using email or Google.
-4.Save and retrieve data, upload images, and view user activity through charts.
+1. Run the app:
+     ```bash
+     flutter run
+2. Explore the chatbot interface and interact with the AI for mental health support.
+3. Sign in or sign up using email or Google.
+4. Save and retrieve data, upload images, and view user activity through charts.
+
+---
 
 ### Firebase Setup
 Ensure the following services are enabled in your Firebase project:
 
-Authentication
-Realtime Database
-Firestore Database
-Storage
-Analytics
-Remote Config
+- Authentication
+- Realtime Database
+- Firestore Database
+- Storage
+- Analytics
+- Remote Config
+
+---
 
 ### Contributing
 Contributions are welcome! Please fork the repository, make changes, and submit a pull request.
 
-License
+---
+
+### License
 This project is licensed under the MIT License. See LICENSE for details.
