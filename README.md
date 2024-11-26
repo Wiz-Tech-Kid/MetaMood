@@ -1,52 +1,47 @@
-# hacks
+# AI Mental Health Chatbot Application
 
-AI Mental Health Chatbot Application
-Welcome to the AI Mental Health Chatbot Application! This Flutter application serves as a virtual assistant that provides mental health support. It leverages AI for conversational responses and integrates various Firebase services for user authentication, data storage, and analytics.
+Welcome to the **AI Mental Health Chatbot Application**! This Flutter application serves as a virtual assistant that provides mental health support. It leverages AI for conversational responses and integrates various Firebase services for user authentication, data storage, and analytics.
 
-Features
--AI-Powered Conversations: Uses OpenAI's API to simulate a mental health chatbot.
--User Authentication: Firebase Authentication for secure user sign-in via email, Google, or anonymous methods.
--Database Integration: Firebase Realtime Database and Cloud Firestore for data persistence.
--Remote Configurations: Manage app behavior dynamically with Firebase Remote Config.
--Analytics: Track user activity using Firebase Analytics.
--Image Uploads: Allow users to upload and retrieve images using Firebase Storage.
--Interactive UI: Charts and animations for enhanced user engagement.
--Personalization: Store user preferences locally using Shared Preferences.
+---
 
-Getting Started
+## Features
+- **AI-Powered Conversations:** Uses OpenAI's API to simulate a mental health chatbot.
+- **User Authentication:** Firebase Authentication for secure user sign-in via email, Google, or anonymous methods.
+- **Database Integration:** Firebase Realtime Database and Cloud Firestore for data persistence.
+- **Remote Configurations:** Manage app behavior dynamically with Firebase Remote Config.
+- **Analytics:** Track user activity using Firebase Analytics.
+- **Image Uploads:** Allow users to upload and retrieve images using Firebase Storage.
+- **Interactive UI:** Charts and animations for enhanced user engagement.
+- **Personalization:** Store user preferences locally using Shared Preferences.
 
-Prerequisites
--Flutter SDK
--Firebase project (set up for Android/iOS)
--OpenAI API key for AI responses
+---
 
-Installation
-Clone the repository:
+## Getting Started
 
-bash
-git clone https://github.com/Wiz-Tech-Kid/MetaMood.git
+### Prerequisites
+- Flutter SDK
+- Firebase project (set up for Android/iOS)
+- OpenAI API key for AI responses
 
-cd MetaMood
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/flutter-ai-mental-health-chatbot.git
+   cd flutter-ai-mental-health-chatbot
+2. Install dependencies:
+   ```bash
+   flutter pub get
+3. Set up Firebase:
+- Download the google-services.json (for Android) and GoogleService-Info.plist (for iOS) from the Firebase console.
+- Place them in the respective directories:
+   - Android: /android/app/
+   - iOS: /ios/Runner/
+4. Configure OpenAI:
+- Create an .env file at the root of the project:
+  ```env
+  OPENAI_API_KEY=your_openai_api_key
 
-Install dependencies:
-
-bash
-flutter pub get
-
-Set up Firebase:
-Download the google-services.json (for Android) and GoogleService-Info.plist (for iOS) from the Firebase console.
-
-Place them in the respective directories:
-Android: /android/app/
-iOS: /ios/Runner/
-
-Configure OpenAI:
-Create an .env file at the root of the project:
-
-env
-OPENAI_API_KEY=your_openai_api_key
-
-Dependencies
+### Dependencies
 Below is a list of dependencies and their use cases:
 
 Dependency	Version	Purpose
@@ -71,7 +66,8 @@ firebase_remote_config	^5.1.5	Enables dynamic configuration updates.
 image_picker	^1.1.2	Enables image selection from the gallery or camera.
 firebase_analytics	^11.3.5	Tracks user interactions and app usage.
 
-Usage
+### Folder Structure
+### Usage
 1.Run the app:
 bash
 flutter run
@@ -79,7 +75,7 @@ flutter run
 3.Sign in or sign up using email or Google.
 4.Save and retrieve data, upload images, and view user activity through charts.
 
-Firebase Setup
+### Firebase Setup
 Ensure the following services are enabled in your Firebase project:
 
 Authentication
@@ -89,7 +85,7 @@ Storage
 Analytics
 Remote Config
 
-Contributing
+### Contributing
 Contributions are welcome! Please fork the repository, make changes, and submit a pull request.
 
 License
