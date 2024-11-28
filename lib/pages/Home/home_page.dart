@@ -25,7 +25,7 @@ class HomePageState extends State<HomePage> {
       const ChatbotPage(),
       const JournalPage(),
       const ExercisesPage(),
-      const GoalsProgressPage(),
+      MentalHealthHome(),
       const SettingsPage(),
     ];
   }

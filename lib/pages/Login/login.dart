@@ -1,13 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hacks/pages/Home/home_page.dart';
 import 'sign_up.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hacks/pages/Login/forgot_password.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Auth state changes stream
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  // Current user
+  User? get currentUser => _auth.currentUser;
+
+  // Sign out
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _auth = FirebaseAuth.instance;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _isPasswordVisible = false;
+
+  Future<void> _signInWithEmail() async {
+    if (_emailController.text.trim().isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message = 'An error occurred. Please try again.';
+      if (e.code == 'user-not-found') {
+        message = 'No user found with this email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    // Implement Google Sign In
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to sign in with Google')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    // Define theme colors
     const primaryGreen = Color(0xFF4CAF50);
     const secondaryGreen = Color(0xFF388E3C);
     const backgroundColor = Color(0xFFF5F5F5);
@@ -22,16 +124,13 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
-                // Logo
                 Container(
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-
                   ),
                   child: Image.asset('assets/images/LOGO.png', height: 200),
                 ),
                 const SizedBox(height: 30),
-                // Login Text
                 const Text(
                   'Welcome Back',
                   style: TextStyle(
@@ -49,8 +148,9 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Email Field
                 TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'Email',
                     prefixIcon: const Icon(Icons.email, color: primaryGreen),
@@ -68,16 +168,19 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Password Field
                 TextField(
-                  obscureText: true,
+                  controller: _passwordController,
+                  obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     hintText: 'Password',
                     prefixIcon: const Icon(Icons.lock, color: primaryGreen),
                     suffixIcon: IconButton(
-                      icon: const Icon(Icons.visibility_off, color: Colors.grey),
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
                       onPressed: () {
-                        // Toggle password visibility
+                        setState(() => _isPasswordVisible = !_isPasswordVisible);
                       },
                     ),
                     filled: true,
@@ -94,12 +197,14 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
-                // Forgot Password
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      // Navigate to forgot password page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+                      );
                     },
                     child: const Text(
                       'Forgot Password?',
@@ -108,17 +213,11 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-                // Login Button
                 SizedBox(
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HomePage()),
-                      );
-                    },
+                    onPressed: _isLoading ? null : _signInWithEmail,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryGreen,
                       foregroundColor: Colors.white,
@@ -127,7 +226,9 @@ class LoginPage extends StatelessWidget {
                       ),
                       elevation: 2,
                     ),
-                    child: const Text(
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
                       'Login',
                       style: TextStyle(
                         fontSize: 18,
@@ -137,7 +238,6 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-                // Social Login Section
                 const Text(
                   'Or continue with',
                   style: TextStyle(
@@ -146,15 +246,12 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Social Login Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _SocialLoginButton(
                       icon: 'assets/images/R.png',
-                      onPressed: () {
-                        // Handle Google login
-                      },
+                      onPressed: _signInWithGoogle,
                     ),
                     const SizedBox(width: 20),
                     _SocialLoginButton(
@@ -173,7 +270,6 @@ class LoginPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 30),
-                // Sign Up Link
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -207,7 +303,6 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-// Custom Social Login Button Widget
 class _SocialLoginButton extends StatelessWidget {
   final String icon;
   final VoidCallback onPressed;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 
 class JournalEntry {
@@ -25,7 +26,34 @@ class JournalPage extends StatefulWidget {
 }
 
 class JournalPageState extends State<JournalPage> {
-  List<JournalEntry> _entries = [];
+  final List<JournalEntry> _entries = [];
+  final DatabaseReference _database = FirebaseDatabase.instance.ref('journal_entries');
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEntries();
+  }
+
+  void _loadEntries() {
+    _database.onValue.listen((event) {
+      final data = event.snapshot.value;
+      if (data != null && data is Map) {
+        setState(() {
+          _entries.clear();
+          data.forEach((key, value) {
+            _entries.add(JournalEntry(
+                id: key,
+                title: value['title'],
+                content: value['content'],
+                createdAt: DateTime.parse(value['createdAt']),
+                mood: value['mood']
+            ));
+          });
+        });
+      }
+    });
+  }
 
   void _addEntry() {
     showModalBottomSheet(
@@ -34,8 +62,11 @@ class JournalPageState extends State<JournalPage> {
       builder: (BuildContext context) {
         return _JournalEntryForm(
           onSubmit: (entry) {
-            setState(() {
-              _entries.add(entry);
+            _database.push().set({
+              'title': entry.title,
+              'content': entry.content,
+              'createdAt': entry.createdAt.toIso8601String(),
+              'mood': entry.mood
             });
           },
         );
@@ -51,11 +82,10 @@ class JournalPageState extends State<JournalPage> {
         return _JournalEntryForm(
           initialEntry: entry,
           onSubmit: (updatedEntry) {
-            setState(() {
-              final index = _entries.indexWhere((e) => e.id == updatedEntry.id);
-              if (index != -1) {
-                _entries[index] = updatedEntry;
-              }
+            _database.child(updatedEntry.id).update({
+              'title': updatedEntry.title,
+              'content': updatedEntry.content,
+              'mood': updatedEntry.mood
             });
           },
         );
@@ -64,9 +94,7 @@ class JournalPageState extends State<JournalPage> {
   }
 
   void _deleteEntry(JournalEntry entry) {
-    setState(() {
-      _entries.removeWhere((e) => e.id == entry.id);
-    });
+    _database.child(entry.id).remove();
   }
 
   @override
@@ -96,8 +124,8 @@ class JournalPageState extends State<JournalPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addEntry,
-        child: const Icon(Icons.add),
         tooltip: 'Add New Entry',
+        child: const Icon(Icons.add),
       ),
     );
   }
