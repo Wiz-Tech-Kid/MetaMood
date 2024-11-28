@@ -28,8 +28,8 @@ Welcome to the **AI Mental Health Chatbot Application**! This Flutter applicatio
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/flutter-ai-mental-health-chatbot.git
-   cd flutter-ai-mental-health-chatbot
+   git clone https://github.com/Wiz-Tech-Kid/MetaMood.git
+   cd MetaMood
 2. Install dependencies:
    ```bash
    flutter pub get
